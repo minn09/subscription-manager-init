@@ -1,0 +1,10 @@
+{
+  "name": "mi-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "pnpm --filter client-subscription-manager dev",
+    "install:all": "pnpm install"
+  }
+}
