@@ -7,12 +7,12 @@ import { cn } from "@/lib/utils"
 type SuscriptionCardProps = {
   title: string,
   nextRenewal: string,
-  tag: string,
+  category: string,
   price: number,
   isRenews?: boolean
 }
 
-export const SuscriptionCard = ({ title, nextRenewal, tag, price, isRenews }: SuscriptionCardProps) => {
+export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews }: SuscriptionCardProps) => {
   const Logo = getLogoByName(title);
   const daysToRenewal = 1;
   return (
@@ -42,7 +42,7 @@ export const SuscriptionCard = ({ title, nextRenewal, tag, price, isRenews }: Su
 
       <CardContent className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-0">
         <span className="px-2.5 py-1 text-xs rounded-full bg-pink-50 text-pink-500 font-medium whitespace-nowrap">
-          {tag}
+          {category}
         </span>
         <div className="flex items-baseline gap-1">
           <p className="text-xl font-bold">{formatCurrency(price)}</p>
