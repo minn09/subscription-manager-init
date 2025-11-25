@@ -35,8 +35,8 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       )}>
         {/* Header / Logo */}
         <div className="flex h-16 items-center justify-between px-6 border-b border-sidebar-border/50">
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-sidebar-primary">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+          <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-blue-400">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-400 text-white">
               <CreditCard className="h-5 w-5" />
             </div>
             <span>SubManager</span>
@@ -112,11 +112,11 @@ function NavItem({ icon: Icon, label, active = false }: { icon: any, label: stri
       className={cn(
         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 group",
         active
-          ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+          ? "bg-blue-400 text-white shadow-sm"
           : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
       )}
     >
-      <Icon className={cn("h-4 w-4", active ? "text-sidebar-primary-foreground" : "text-muted-foreground group-hover:text-sidebar-accent-foreground")} />
+      <Icon className={cn("h-4 w-4", active ? "text-white" : "text-muted-foreground group-hover:text-sidebar-accent-foreground")} />
       {label}
     </a>
   )
@@ -131,7 +131,7 @@ function CategoryItem({ label, count, color }: { label: string, count: number, c
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground/50 group-hover:text-muted-foreground">{count}</span>
-        <input type="checkbox" className="h-4 w-4 rounded border-sidebar-border bg-transparent text-sidebar-primary focus:ring-sidebar-ring" />
+        <input type="checkbox" className="h-4 w-4 rounded border-sidebar-border bg-transparent text-blue-400 focus:ring-sidebar-ring" />
       </div>
     </label>
   )
