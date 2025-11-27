@@ -11,13 +11,41 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { type Subscription } from './types'
 
 type SubscriptionDialogProps = {
   open: boolean
   setOpen: (open: boolean) => void
+  setSubscriptions: (subscriptions: Subscription[]) => void
+  subscriptions: Subscription[]
 }
 
-export function SubscriptionDialog({ open, setOpen }: SubscriptionDialogProps) {
+export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscriptions }: SubscriptionDialogProps) {
+
+  const addSubscription = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    // Recuperar los datos del formulario y asignarlos al estado de suscripciones
+    const form = e.currentTarget as HTMLFormElement
+    const formData = new FormData(form)
+
+    const name = formData.get('name') as string
+    const category = formData.get('category') as string
+    const date = formData.get('date') as string
+    const price = parseFloat(formData.get('price') as string)
+
+    const newSubscription: Subscription = {
+      id: crypto.randomUUID(),
+      title: name,
+      category: category.toLocaleUpperCase(),
+      nextRenewal: new Date(date),
+      price: price,
+      isRenews: true
+    }
+
+    setSubscriptions([...subscriptions, newSubscription])
+    setOpen(false)
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -29,11 +57,11 @@ export function SubscriptionDialog({ open, setOpen }: SubscriptionDialogProps) {
             done.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={(e) => { e.preventDefault(); setOpen(false); }} className="grid gap-6 py-4">
+        <form id="form" onSubmit={(e) => { addSubscription(e) }} className="grid gap-6 py-4">
           {/* Subscription Name */}
           <div className="grid gap-2">
             <Label htmlFor="name">Subscription Name</Label>
-            <Input id="name" placeholder="e.g., Netflix" />
+            <Input id="name" name="name" placeholder="e.g., Netflix" required />
           </div>
 
           {/* Price & Billing Cycle */}
@@ -42,13 +70,14 @@ export function SubscriptionDialog({ open, setOpen }: SubscriptionDialogProps) {
               <Label htmlFor="price">Price</Label>
               <div className="relative">
                 <span className="absolute left-0 top-0 flex h-full w-7 items-center justify-center text-muted-foreground">$</span>
-                <Input id="price" placeholder="15.99" className="pl-7" />
+                <Input id="price" name="price" type="number" step="0.01" placeholder="15.99" className="pl-7" required />
               </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="billing-cycle">Billing Cycle</Label>
               <select
                 id="billing-cycle"
+                name="billing-cycle"
                 className={cn(
                   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
                   "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
@@ -64,7 +93,7 @@ export function SubscriptionDialog({ open, setOpen }: SubscriptionDialogProps) {
           {/* Next Billing Date */}
           <div className="grid gap-2">
             <Label htmlFor="date">Next Billing Date</Label>
-            <Input id="date" type="date" className="block" />
+            <Input id="date" name="date" type="date" className="block" required />
           </div>
 
           {/* Category */}
@@ -72,7 +101,9 @@ export function SubscriptionDialog({ open, setOpen }: SubscriptionDialogProps) {
             <Label htmlFor="category">Category</Label>
             <select
               id="category"
+              name="category"
               defaultValue=""
+              required
               className={cn(
                 "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
                 "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
@@ -96,7 +127,6 @@ export function SubscriptionDialog({ open, setOpen }: SubscriptionDialogProps) {
             <Button
               type="submit"
               className="bg-blue-400 hover:bg-blue-500 text-white"
-              disabled={true}
             >
               Save Subscription
             </Button>

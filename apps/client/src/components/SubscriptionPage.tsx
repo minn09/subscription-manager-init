@@ -6,11 +6,12 @@ import { useState } from "react"
 import { Sidebar } from "./Sidebar"
 import { Layout } from "./Layout"
 import { SubscriptionDialog } from "./SubscriptionDialog"
+import { type Subscription } from './types'
 
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [open, setOpen] = useState(false)
-
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   /**
    * 1 Importamos el Dialog
    * 2 Usar el componente Dialog en un componente, luego asignar las props de open y setOpen
@@ -49,12 +50,17 @@ export const SubscriptionPage = () => {
             <div>
               <h2 className="text-lg font-semibold">Your Suscriptions</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <SuscriptionCard title="Netflix" nextRenewal="2026-10-28" category={'Entertaiment'} price={15.49} isRenews />
-                <SuscriptionCard title="Spotify" nextRenewal="2026-11-12" category={'Entertaiment'} price={9.99} />
-                <SuscriptionCard title="Youtube" nextRenewal="2026-11-24" category={'Entertaiment'} price={12.99} />
-                <SuscriptionCard title="Cursor" nextRenewal="2026-12-15" category={'Productivity'} price={20.99} />
-                <SuscriptionCard title="Vercel" nextRenewal="2026-12-20" category={'Software'} price={15.00} isRenews />
-                <SuscriptionCard title="Figma" nextRenewal="2026-12-20" category={'Software'} price={12.00} />
+                {
+                  subscriptions.map((subscription) => (
+                    <SuscriptionCard
+                      key={subscription.id}
+                      title={subscription.title}
+                      nextRenewal={subscription.nextRenewal}
+                      category={subscription.category}
+                      price={subscription.price}
+                      isRenews={subscription.isRenews} />
+                  ))
+                }
 
               </div>
             </div>
@@ -77,7 +83,12 @@ export const SubscriptionPage = () => {
                 </Button>
               </div>
             </div>
-            <SubscriptionDialog open={open} setOpen={setOpen} />
+            <SubscriptionDialog
+              open={open}
+              setOpen={setOpen}
+              setSubscriptions={setSubscriptions}
+              subscriptions={subscriptions}
+            />
           </div>
         </div>
       </main>

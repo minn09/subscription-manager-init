@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 
 type SuscriptionCardProps = {
   title: string,
-  nextRenewal: string,
+  nextRenewal: Date,
   category: string,
   price: number,
   isRenews?: boolean
@@ -30,7 +30,8 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
 
       <CardHeader className="flex flex-row items-center gap-4 pt-6 pb-4">
         <div className="bg-pink-50 rounded-2xl p-2.5 shrink-0">
-          <Logo className="h-10 w-10" />
+          {Logo && <Logo className="h-8 w-8 text-pink-500" />}
+
         </div>
         <div className="flex flex-col min-w-0">
           <h2 className="text-lg font-semibold truncate pr-4">{title}</h2>

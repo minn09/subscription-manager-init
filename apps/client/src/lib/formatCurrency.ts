@@ -5,7 +5,7 @@ export const formatCurrency = (amount: number, currency = 'PEN', locale = 'es-PE
   }).format(amount);
 };
 
-export const formatDate = (date: string) => {
+export const formatDate = (date: Date) => {
   return new Date(date).toLocaleDateString('es-PE', {
     year: 'numeric',
     month: 'short',
