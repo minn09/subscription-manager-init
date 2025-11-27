@@ -7,6 +7,7 @@ import { Sidebar } from "./Sidebar"
 import { Layout } from "./Layout"
 import { SubscriptionDialog } from "./SubscriptionDialog"
 import { type Subscription } from './types'
+import { ButtonGroupDemo } from '@/components/ButtonGroup'
 
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -24,7 +25,7 @@ export const SubscriptionPage = () => {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-muted/30">
         {/* Top Header (Optional, for mobile menu or page title) */}
-        <header className="flex h-16 items-center border-b border-border bg-background/50 px-4 md:px-6 backdrop-blur-sm gap-4">
+        <header className="flex h-16 items-center border-b border-border bg-background/50 px-4 md:px-6 backdrop-blur-sm gap-4 justify-between">
           <button
             className="md:hidden p-2 -ml-2 hover:bg-accent rounded-md"
             onClick={() => setSidebarOpen(true)}
@@ -34,6 +35,8 @@ export const SubscriptionPage = () => {
           <h1 className="text-lg font-semibold">
             <a href="/">Dashboard</a>
           </h1>
+          <ButtonGroupDemo />
+
         </header>
 
         {/* Main Content Scroll Area */}
