@@ -6,3 +6,9 @@ export type Subscription = {
     price: number
     isRenews: boolean
   }
+
+export type Category = {
+  id: string
+  name: string
+  color: string
+}

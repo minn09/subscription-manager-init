@@ -6,13 +6,16 @@ import { useState } from "react"
 import { Sidebar } from "./Sidebar"
 import { Layout } from "./Layout"
 import { SubscriptionDialog } from "./SubscriptionDialog"
-import { type Subscription } from './types'
+import { type Subscription, type Category } from './types'
 import { ButtonGroupDemo } from '@/components/ButtonGroup'
+import { CategoryDialog } from './CategoryDialog'
 
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false)
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   /**
    * 1 Importamos el Dialog
    * 2 Usar el componente Dialog en un componente, luego asignar las props de open y setOpen
@@ -22,7 +25,11 @@ export const SubscriptionPage = () => {
 
   return (
     <Layout>
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        categories={categories}
+      />
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-muted/30">
         {/* Top Header (Optional, for mobile menu or page title) */}
         <header className="flex h-16 items-center border-b border-border bg-background/50 px-4 md:px-6 backdrop-blur-sm gap-4 justify-between">
@@ -80,17 +87,31 @@ export const SubscriptionPage = () => {
                 <p className="mb-8 max-w-sm text-sm text-muted-foreground leading-relaxed">
                   You've reached the end of the list. Click the button below to add a new subscription and start tracking your expenses.
                 </p>
-                <Button className="bg-blue-400 hover:bg-blue-500 text-white font-medium px-6"
-                  onClick={() => setOpen(true)}>
-                  Add Subscription
-                </Button>
+                <div className="flex gap-2 flex-col md:flex-row">
+                  <Button className="bg-blue-400 hover:bg-blue-500 text-white font-medium px-6"
+                    onClick={() => setSubscriptionDialogOpen(true)}>
+                    Add Subscription
+                  </Button>
+                  <Button className="bg-blue-400 hover:bg-blue-500 text-white font-medium px-6"
+                    onClick={() => setCategoryDialogOpen(true)}>
+                    Add Category
+                  </Button>
+                </div>
               </div>
             </div>
             <SubscriptionDialog
-              open={open}
-              setOpen={setOpen}
+              open={subscriptionDialogOpen}
+              setOpen={setSubscriptionDialogOpen}
               setSubscriptions={setSubscriptions}
               subscriptions={subscriptions}
+              categories={categories}
+            />
+
+            <CategoryDialog
+              open={categoryDialogOpen}
+              setOpen={setCategoryDialogOpen}
+              setCategories={setCategories}
+              categories={categories}
             />
           </div>
         </div>

@@ -11,16 +11,17 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { type Subscription } from './types'
+import { type Subscription, type Category } from './types'
 
 type SubscriptionDialogProps = {
   open: boolean
   setOpen: (open: boolean) => void
   setSubscriptions: (subscriptions: Subscription[]) => void
   subscriptions: Subscription[]
+  categories: Category[]
 }
 
-export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscriptions }: SubscriptionDialogProps) {
+export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscriptions, categories }: SubscriptionDialogProps) {
 
   const addSubscription = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -111,10 +112,13 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
               )}
             >
               <option value="" disabled>Select a category</option>
-              <option value="entertainment">Entertainment</option>
-              <option value="software">Software</option>
-              <option value="utilities">Utilities</option>
-              <option value="productivity">Productivity</option>
+              {
+                categories.map((category) => (
+                  <option value={category.name} key={category.id}>
+                    {category.name}
+                  </option>
+                ))
+              }
             </select>
           </div>
 

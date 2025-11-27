@@ -7,17 +7,20 @@ import {
   Settings,
   CreditCard,
   PieChart,
-  X
+  X,
+  type LucideIcon
 } from "lucide-react"
 import { Input } from "./ui/input"
 import { cn } from "../lib/utils"
+import type { Category } from "./types"
 
 interface SidebarProps {
   isOpen?: boolean
   onClose?: () => void
+  categories: Category[]
 }
 
-export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
+export function Sidebar({ isOpen = false, onClose, categories }: SidebarProps) {
   const sidebarContent = (
     <>
       {/* Header / Logo */}
@@ -59,10 +62,14 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           </div>
 
           <div className="space-y-1">
-            <CategoryItem label="Entertainment" count={3} color="bg-pink-500" />
-            <CategoryItem label="Software" count={5} color="bg-blue-500" />
-            <CategoryItem label="Utilities" count={2} color="bg-green-500" />
-            <CategoryItem label="Productivity" count={4} color="bg-orange-500" />
+            {categories.map((categorie) => (
+              <CategoryItem
+                key={categorie.id}
+                label={categorie.name}
+                count={0}
+                color={categorie.color}
+              />
+            ))}
           </div>
         </nav>
       </div>
@@ -119,7 +126,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   )
 }
 
-function NavItem({ icon: Icon, label, active = false }: { icon: any, label: string, active?: boolean }) {
+function NavItem({ icon: Icon, label, active = false }: { icon: LucideIcon, label: string, active?: boolean }) {
   return (
     <a
       href="#"
@@ -140,7 +147,7 @@ function CategoryItem({ label, count, color }: { label: string, count: number, c
   return (
     <label className="flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors group">
       <div className="flex items-center gap-3">
-        <div className={cn("h-2 w-2 rounded-full", color)} />
+        <div className={"h-2 w-2 rounded-full"} style={{ backgroundColor: color }} />
         <span>{label}</span>
       </div>
       <div className="flex items-center gap-2">
