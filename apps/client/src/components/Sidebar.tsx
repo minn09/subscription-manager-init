@@ -12,15 +12,20 @@ import {
 } from "lucide-react"
 import { Input } from "./ui/input"
 import { cn } from "../lib/utils"
-import type { Category } from "./types"
+import type { Category, Subscription } from "./types"
 
 interface SidebarProps {
   isOpen?: boolean
   onClose?: () => void
   categories: Category[]
+  subscriptions: Subscription[]
 }
 
-export function Sidebar({ isOpen = false, onClose, categories }: SidebarProps) {
+export function Sidebar({ isOpen = false, onClose, categories, subscriptions }: SidebarProps) {
+  const countCategories = (category: string) => {
+    return subscriptions.filter(sub => sub.category.toLowerCase() === category.toLowerCase()).length
+  }
+
   const sidebarContent = (
     <>
       {/* Header / Logo */}
@@ -66,14 +71,13 @@ export function Sidebar({ isOpen = false, onClose, categories }: SidebarProps) {
               <CategoryItem
                 key={categorie.id}
                 label={categorie.name}
-                count={0}
+                count={countCategories(categorie.name)}
                 color={categorie.color}
               />
             ))}
           </div>
         </nav>
       </div>
-
       {/* Footer Actions */}
       <div className="border-t border-sidebar-border p-4 space-y-2">
         <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">

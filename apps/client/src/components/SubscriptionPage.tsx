@@ -29,6 +29,7 @@ export const SubscriptionPage = () => {
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         categories={categories}
+        subscriptions={subscriptions}
       />
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-muted/30">
         {/* Top Header (Optional, for mobile menu or page title) */}

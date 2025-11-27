@@ -22,7 +22,6 @@ type SubscriptionDialogProps = {
 }
 
 export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscriptions, categories }: SubscriptionDialogProps) {
-
   const addSubscription = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -41,7 +40,7 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
       category: category.toLocaleUpperCase(),
       nextRenewal: new Date(date),
       price: price,
-      isRenews: true
+      isRenews: false
     }
 
     setSubscriptions([...subscriptions, newSubscription])
