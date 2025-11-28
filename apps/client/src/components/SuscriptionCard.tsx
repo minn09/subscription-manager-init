@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { formatCurrency, formatDate } from "@/lib/formatCurrency"
-import { Siren } from "lucide-react"
-import { getLogoByName } from "@/lib/logoByName"
+import { HelpCircle, Siren } from "lucide-react"
+import { LOGOS } from "@/lib/logoByName"
 import { cn } from "@/lib/utils"
+import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '../constants/index'
 
 type SuscriptionCardProps = {
   title: string,
@@ -13,13 +14,16 @@ type SuscriptionCardProps = {
 }
 
 export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews }: SuscriptionCardProps) => {
-  const Logo = getLogoByName(title);
-  const daysToRenewal = 1;
+  const Logo = LOGOS[title.toLowerCase()] ?? HelpCircle;
+  const today = new Date()
+  // Calcular cuántos días FALTAN
+  const diffMiliSeconds = nextRenewal.getTime() - today.getTime()
+  const daysToRenewal = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24))
   return (
     <Card className={cn("flex flex-col transition-all hover:shadow-md relative", {
-      "border-yellow-500 bg-yellow-50/5": isRenews,
+      "border-yellow-500 bg-yellow-50/5": isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
     })}>
-      {isRenews && (
+      {(isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL) && (
         <div className="absolute top-4 right-4">
           <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-600 ring-1 ring-inset ring-yellow-500/20 animate-in fade-in zoom-in duration-300">
             <Siren className="h-3 w-3" />

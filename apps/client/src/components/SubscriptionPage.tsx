@@ -9,6 +9,7 @@ import { SubscriptionDialog } from "./SubscriptionDialog"
 import { type Subscription, type Category } from './types'
 import { ButtonGroupDemo } from '@/components/ButtonGroup'
 import { CategoryDialog } from './CategoryDialog'
+import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '../constants/index'
 
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -34,17 +35,6 @@ export const SubscriptionPage = () => {
    * 4 Con un boton abrimos el Dialog y para cerrar eso se encarga el Dialog internamente
    */
 
-  const getDaysUntilRenewal = (nextRenewal: Date) => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0) // Establece la hora a medianoche para evitar problemas de zona horaria
-    const renewalDate = new Date(nextRenewal)
-    renewalDate.setHours(0, 0, 0, 0) // Establece la hora a medianoche para evitar problemas de zona horaria
-    const timeDiff = renewalDate.getTime() - today.getTime()
-    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
-
-    return diffDays
-  }
-
   const totalMonthy = useMemo(() => {
     return subscriptions.reduce((total, subscription) => {
       return total + subscription.price
@@ -57,7 +47,24 @@ export const SubscriptionPage = () => {
 
 
   const upcomingRenewals = useMemo(() => {
-    return subscriptions.filter(sub => sub.isRenews).length
+    const today = new Date()
+    const renewingSoon = subscriptions.filter((sub) => {
+      // Calcular cuántos días FALTAN para la renovación
+      const diffMiliSeconds = sub.nextRenewal.getTime() - today.getTime()
+      const diffDays = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24));
+
+      /**TODO:
+       * Saber cuantos dias de renovacion faltan o pasaron.
+       * Subsciption log items -> Subscription: Netflix diffDays: -6
+       */
+      console.log('Subscription:', sub.title, 'diffDays:', diffDays)
+
+      // Mostrar solo si faltan entre 0 y MAX_DAYS días
+      return diffDays >= 0 && diffDays <= MAX_DAYS_TO_ANNOUNCE_RENEWAL;
+    })
+
+    console.log('Suscripciones próximas a renovarse:', renewingSoon);
+    return renewingSoon.length
   }, [subscriptions])
 
   return (
