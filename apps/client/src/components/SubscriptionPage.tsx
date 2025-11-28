@@ -2,7 +2,7 @@ import { Menu, CirclePlus } from "lucide-react"
 import { StatCard } from "./StatCard"
 import { SuscriptionCard } from "./SuscriptionCard"
 import { Button } from "./ui/button"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Sidebar } from "./Sidebar"
 import { Layout } from "./Layout"
 import { SubscriptionDialog } from "./SubscriptionDialog"
@@ -14,14 +14,51 @@ export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false)
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([
+    {
+      id: '1',
+      title: 'Netflix',
+      category: 'ENTERTAINMENT',
+      nextRenewal: new Date('2025-11-28'),
+      price: 12.99,
+      isRenews: true
+    }
+  ])
+  const [categories, setCategories] = useState<Category[]>([
+    { id: '1', name: 'ENTERTAINMENT', color: '#FF5733' },
+  ])
   /**
    * 1 Importamos el Dialog
    * 2 Usar el componente Dialog en un componente, luego asignar las props de open y setOpen
    * 3 Creamos un estado para open y setOpen, y con esto indicamos al Dialog si se tiene que abrir o cerrar
    * 4 Con un boton abrimos el Dialog y para cerrar eso se encarga el Dialog internamente
    */
+
+  const getDaysUntilRenewal = (nextRenewal: Date) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Establece la hora a medianoche para evitar problemas de zona horaria
+    const renewalDate = new Date(nextRenewal)
+    renewalDate.setHours(0, 0, 0, 0) // Establece la hora a medianoche para evitar problemas de zona horaria
+    const timeDiff = renewalDate.getTime() - today.getTime()
+    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
+
+    return diffDays
+  }
+
+  const totalMonthy = useMemo(() => {
+    return subscriptions.reduce((total, subscription) => {
+      return total + subscription.price
+    }, 0)
+  }, [subscriptions])
+
+  const totalAnual = useMemo(() => {
+    return totalMonthy * 12
+  }, [totalMonthy])
+
+
+  const upcomingRenewals = useMemo(() => {
+    return subscriptions.filter(sub => sub.isRenews).length
+  }, [subscriptions])
 
   return (
     <Layout>
@@ -53,9 +90,9 @@ export const SubscriptionPage = () => {
 
             {/* Stats Grid Placeholder */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <StatCard title="Total Monthly" value={128.75} format="currency" />
-              <StatCard title="Total Anual Cost" value={1545.00} format="currency" />
-              <StatCard title="Upcoming Renewals" value={3} format="text" />
+              <StatCard title="Total Monthly" value={totalMonthy} format="currency" />
+              <StatCard title="Total Anual Cost" value={totalAnual} format="currency" />
+              <StatCard title="Upcoming Renewals" value={upcomingRenewals} format="text" />
             </div>
 
             <div>
