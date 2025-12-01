@@ -7,8 +7,8 @@
 - [x] CRUD suscripciones (nombre, precio, fecha renovación, categoría)
 - [ ] Login e ingreso sin usuario solo localstorage
 - [x] Dashboard con cards
-- [ ] Cálculo gastos mensuales/anuales
+- [x] Cálculo gastos mensuales/anuales
 - [x] Notificaciones de renovación (7 días antes)
-- [ ] Filtros por categoría y búsqueda
+- [x] Filtros por categoría y búsqueda
 - [ ] Persistencia con base de datos y con localStorage (on/off de cada una)
 - Extra: Exportar/Importar JSON, calendario mensual, dark mode
