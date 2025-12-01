@@ -1,16 +1,16 @@
-import { Menu, CirclePlus } from "lucide-react"
-import { StatCard } from "@/components/StatCard"
-import { SuscriptionCard } from "./SuscriptionCard"
-import { Button } from "@/components/ui/button"
 import { useMemo, useState } from "react"
+import { type Subscription, type Category } from '@/types/types'
+import { Menu, CirclePlus } from "lucide-react"
+import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
+import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
+import { Button } from "@/components/ui/button"
+import { ButtonGroupDemo } from '@/components/ButtonGroup'
+import { StatCard } from "@/components/StatCard"
 import { Sidebar } from "@/components/Sidebar"
 import { Layout } from "@/components/Layout"
-import { SubscriptionDialog } from "@/components/SubscriptionDialog"
-import { type Subscription, type Category } from '@/types/types'
-import { ButtonGroupDemo } from '@/components/ButtonGroup'
 import { CategoryDialog } from '@/components/CategoryDialog'
-import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
-import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
+import { SubscriptionDialog } from "@/components/SubscriptionDialog"
+import { SuscriptionCard } from "@/features/subscriptions/SuscriptionCard"
 
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
