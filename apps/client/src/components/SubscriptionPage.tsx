@@ -10,6 +10,7 @@ import { type Subscription, type Category } from './types'
 import { ButtonGroupDemo } from '@/components/ButtonGroup'
 import { CategoryDialog } from './CategoryDialog'
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '../constants/index'
+import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
 
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -20,7 +21,7 @@ export const SubscriptionPage = () => {
       id: '1',
       title: 'Netflix',
       category: 'ENTERTAINMENT',
-      nextRenewal: new Date(2025, 11, 1),
+      nextRenewal: new Date(2025, 11, 3),
       price: 12.99,
       isRenews: true
     }
@@ -57,13 +58,13 @@ export const SubscriptionPage = () => {
        * Saber cuantos dias de renovacion faltan o pasaron.
        * Subsciption log items -> Subscription: Netflix diffDays: -6
        */
-      console.log('Subscription:', sub.title, 'diffDays:', diffDays)
+      // console.log('Subscription:', sub.title, 'diffDays:', diffDays)
 
       // Mostrar solo si faltan entre 0 y MAX_DAYS días
       return diffDays >= 0 && diffDays <= MAX_DAYS_TO_ANNOUNCE_RENEWAL;
     })
 
-    console.log('Suscripciones próximas a renovarse:', renewingSoon);
+    // console.log('Suscripciones próximas a renovarse:', renewingSoon);
     return renewingSoon.length
   }, [subscriptions])
 
@@ -87,7 +88,7 @@ export const SubscriptionPage = () => {
           <h1 className="text-lg font-semibold">
             <a href="/">Dashboard</a>
           </h1>
-          <ButtonGroupDemo />
+          <ButtonGroupDemo setSubscriptionDialogOpen={setSubscriptionDialogOpen} setCategoryDialogOpen={setCategoryDialogOpen} />
 
         </header>
 
@@ -113,7 +114,7 @@ export const SubscriptionPage = () => {
                       nextRenewal={subscription.nextRenewal}
                       category={subscription.category}
                       price={subscription.price}
-                      isRenews={subscription.isRenews} />
+                      isRenews={checkIfRenewalIsNear(subscription.nextRenewal)} />
                   ))
                 }
 

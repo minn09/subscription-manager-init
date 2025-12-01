@@ -4,6 +4,7 @@ import { HelpCircle, Siren } from "lucide-react"
 import { LOGOS } from "@/lib/logoByName"
 import { cn } from "@/lib/utils"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '../constants/index'
+// import { getDaysUntilRenewal } from "@/lib/checkIfRenewalIsNear"
 
 type SuscriptionCardProps = {
   title: string,
@@ -14,6 +15,12 @@ type SuscriptionCardProps = {
 }
 
 export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews }: SuscriptionCardProps) => {
+
+  // console.log('=== SuscriptionCard:', title, '===');
+  // console.log('Today:', new Date().toLocaleDateString());
+  // console.log('Renewal:', nextRenewal.toLocaleDateString());
+  // console.log('Days until:', getDaysUntilRenewal(nextRenewal));
+  // console.log('isRenews:', isRenews);
   const Logo = LOGOS[title.toLowerCase()] ?? HelpCircle;
   const today = new Date()
   // Calcular cuántos días FALTAN

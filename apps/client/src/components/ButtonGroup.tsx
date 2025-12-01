@@ -1,7 +1,7 @@
 import {
-  ArchiveIcon,
-  MailCheckIcon,
   MoreHorizontalIcon,
+  Tags,
+  CreditCard
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,8 +16,12 @@ import {
 
 import { useState } from "react"
 
+type Props = {
+  setSubscriptionDialogOpen: (status: boolean) => void,
+  setCategoryDialogOpen: (status: boolean) => void
+}
 
-export function ButtonGroupDemo() {
+export function ButtonGroupDemo({ setSubscriptionDialogOpen, setCategoryDialogOpen }: Props) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
@@ -32,13 +36,19 @@ export function ButtonGroupDemo() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <MailCheckIcon />
-                Mark as Read
+              <DropdownMenuItem onClick={() => {
+                setSubscriptionDialogOpen(true);
+                setMenuOpen(false);
+              }}>
+                <CreditCard />
+                Add Subscription
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <ArchiveIcon />
-                Archive
+              <DropdownMenuItem onClick={() => {
+                setCategoryDialogOpen(true);
+                setMenuOpen(false);
+              }}>
+                <Tags />
+                Add Category
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

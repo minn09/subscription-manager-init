@@ -34,11 +34,15 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
     const date = formData.get('date') as string
     const price = parseFloat(formData.get('price') as string)
 
+    const [year, month, day] = date.split('-').map(Number)
+    const nextRenewalDate = new Date(year, month - 1, day)
+
+
     const newSubscription: Subscription = {
       id: crypto.randomUUID(),
       title: name,
       category: category.toLocaleUpperCase(),
-      nextRenewal: new Date(date),
+      nextRenewal: nextRenewalDate,
       price: price,
       isRenews: false
     }
