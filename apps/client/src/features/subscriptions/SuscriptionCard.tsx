@@ -3,7 +3,7 @@ import { formatCurrency, formatDate } from "@/lib/formatCurrency"
 import { HelpCircle, Siren } from "lucide-react"
 import { LOGOS } from "@/lib/logoByName"
 import { cn } from "@/lib/utils"
-import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '../constants/index'
+import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
 // import { getDaysUntilRenewal } from "@/lib/checkIfRenewalIsNear"
 
 type SuscriptionCardProps = {

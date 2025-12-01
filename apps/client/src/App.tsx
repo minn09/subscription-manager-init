@@ -1,5 +1,5 @@
-import { Homepage } from "@/components/HomePage"
-import { SubscriptionPage } from "@/components/SubscriptionPage"
+import { Homepage } from "@/features/landing/HomePage"
+import { SubscriptionPage } from "@/features/subscriptions/SubscriptionPage"
 import { NotFoundPage } from "@/components/404"
 
 function App() {

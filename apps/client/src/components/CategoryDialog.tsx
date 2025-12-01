@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import type { Category } from "./types"
+import type { Category } from "@/types/types"
 
 type CategoryDialogProps = {
   open: boolean

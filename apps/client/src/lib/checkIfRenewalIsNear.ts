@@ -1,5 +1,5 @@
 // En checkIfRenewalIsNear.ts
-import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from "../constants/index";
+import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from "@/constants/index";
 
 export const checkIfRenewalIsNear = (renewalDate: Date): boolean => {
   // Normalizar fechas a medianoche en hora local

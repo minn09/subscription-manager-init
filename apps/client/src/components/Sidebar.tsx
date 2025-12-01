@@ -10,9 +10,9 @@ import {
   X,
   type LucideIcon
 } from "lucide-react"
-import { Input } from "./ui/input"
-import { cn } from "../lib/utils"
-import type { Category, Subscription } from "./types"
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+import type { Category, Subscription } from "@/types/types"
 
 interface SidebarProps {
   isOpen?: boolean
