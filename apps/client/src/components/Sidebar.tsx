@@ -19,11 +19,22 @@ interface SidebarProps {
   onClose?: () => void
   categories: Category[]
   subscriptions: Subscription[]
+  selectedCategories: string[]
+  onCategoryChange: (categories: string[]) => void
 }
 
-export function Sidebar({ isOpen = false, onClose, categories, subscriptions }: SidebarProps) {
+export function Sidebar({ isOpen = false, onClose, categories, subscriptions, selectedCategories, onCategoryChange }: SidebarProps) {
   const countCategories = (category: string) => {
     return subscriptions.filter(sub => sub.category.toLowerCase() === category.toLowerCase()).length
+  }
+
+  const handleCategoryToggle = (categoryName: string) => {
+    const lowerCaseName = categoryName.toLowerCase()
+    if (selectedCategories.includes(lowerCaseName)) {
+      onCategoryChange(selectedCategories.filter(cat => cat !== lowerCaseName))
+    } else {
+      onCategoryChange([...selectedCategories, lowerCaseName])
+    }
   }
 
   const sidebarContent = (
@@ -73,6 +84,8 @@ export function Sidebar({ isOpen = false, onClose, categories, subscriptions }: 
                 label={categorie.name}
                 count={countCategories(categorie.name)}
                 color={categorie.color}
+                isSelected={selectedCategories.includes(categorie.name.toLowerCase())}
+                onToggle={() => handleCategoryToggle(categorie.name)}
               />
             ))}
           </div>
@@ -147,7 +160,7 @@ function NavItem({ icon: Icon, label, active = false }: { icon: LucideIcon, labe
   )
 }
 
-function CategoryItem({ label, count, color }: { label: string, count: number, color: string }) {
+function CategoryItem({ label, count, color, isSelected, onToggle }: { label: string, count: number, color: string, isSelected: boolean, onToggle: () => void }) {
   return (
     <label className="flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors group">
       <div className="flex items-center gap-3">
@@ -156,7 +169,12 @@ function CategoryItem({ label, count, color }: { label: string, count: number, c
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-muted-foreground/50 group-hover:text-muted-foreground">{count}</span>
-        <input type="checkbox" className="h-4 w-4 rounded border-sidebar-border bg-transparent text-blue-400 focus:ring-sidebar-ring" />
+        <input
+          type="checkbox"
+          className="h-4 w-4 rounded border-sidebar-border bg-transparent text-blue-400 focus:ring-sidebar-ring"
+          checked={isSelected}
+          onChange={onToggle}
+        />
       </div>
     </label>
   )

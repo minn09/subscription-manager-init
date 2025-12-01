@@ -20,15 +20,16 @@ export const SubscriptionPage = () => {
     {
       id: '1',
       title: 'Netflix',
-      category: 'ENTERTAINMENT',
+      category: 'Entertaiment',
       nextRenewal: new Date(2025, 11, 3),
       price: 12.99,
       isRenews: true
     }
   ])
   const [categories, setCategories] = useState<Category[]>([
-    { id: '1', name: 'ENTERTAINMENT', color: '#FF5733' },
+    { id: '1', name: 'Entertaiment', color: '#FF5733' },
   ])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   /**
    * 1 Importamos el Dialog
    * 2 Usar el componente Dialog en un componente, luego asignar las props de open y setOpen
@@ -68,6 +69,13 @@ export const SubscriptionPage = () => {
     return renewingSoon.length
   }, [subscriptions])
 
+  const filteredSubscriptions = useMemo(() => {
+    if (selectedCategories.length === 0) {
+      return subscriptions
+    }
+    return subscriptions.filter((sub) => selectedCategories.includes(sub.category.toLowerCase())
+    )
+  }, [selectedCategories, subscriptions])
   return (
     <Layout>
       <Sidebar
@@ -75,6 +83,8 @@ export const SubscriptionPage = () => {
         onClose={() => setSidebarOpen(false)}
         categories={categories}
         subscriptions={subscriptions}
+        selectedCategories={selectedCategories}
+        onCategoryChange={setSelectedCategories}
       />
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-muted/30">
         {/* Top Header (Optional, for mobile menu or page title) */}
@@ -106,8 +116,8 @@ export const SubscriptionPage = () => {
             <div>
               <h2 className="text-lg font-semibold">Your Suscriptions</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {
-                  subscriptions.map((subscription) => (
+                {filteredSubscriptions.length > 0 ? (
+                  filteredSubscriptions.map((subscription) => (
                     <SuscriptionCard
                       key={subscription.id}
                       title={subscription.title}
@@ -115,8 +125,10 @@ export const SubscriptionPage = () => {
                       category={subscription.category}
                       price={subscription.price}
                       isRenews={checkIfRenewalIsNear(subscription.nextRenewal)} />
-                  ))
-                }
+                  ))) : (
+                  <div className="col-span-full text-center py-8 text-muted-foreground">
+                    No subscriptions found for selected categories
+                  </div>)}
 
               </div>
             </div>
