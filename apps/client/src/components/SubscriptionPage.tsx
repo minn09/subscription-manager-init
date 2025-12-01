@@ -20,7 +20,7 @@ export const SubscriptionPage = () => {
       id: '1',
       title: 'Netflix',
       category: 'ENTERTAINMENT',
-      nextRenewal: new Date('2025-11-28'),
+      nextRenewal: new Date(2025, 11, 1),
       price: 12.99,
       isRenews: true
     }

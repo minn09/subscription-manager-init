@@ -27,7 +27,8 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
         <div className="absolute top-4 right-4">
           <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-600 ring-1 ring-inset ring-yellow-500/20 animate-in fade-in zoom-in duration-300">
             <Siren className="h-3 w-3" />
-            Renews in {daysToRenewal} days
+            {daysToRenewal === 0 ? "Today it's your turn to renew 🥲" : `Renews in ${daysToRenewal} days 😁`}
+
           </span>
         </div>
       )}
