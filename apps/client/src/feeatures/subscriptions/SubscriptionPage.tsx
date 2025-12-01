@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { type Subscription, type Category } from '@/types/types'
+import { type Subscription, type Category } from '@/'
 import { Menu, CirclePlus } from "lucide-react"
 import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
