@@ -5,8 +5,13 @@ import { Pool } from "pg";
 import cors from "cors";
 import pino from "pino";
 import { categoriesTable, subscriptionsTable } from "./src/db/schema.ts";
-
+import { apiReference } from "@scalar/express-api-reference";
 import "dotenv/config";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = 3000;
@@ -37,7 +42,7 @@ const db = drizzle({ client: pool });
 app.use(
   cors({
     origin: (origin, callback) => {
-      const ACCEPTED_ORIGINS = ["http://localhost:3000"];
+      const ACCEPTED_ORIGINS = ["http://localhost:5173"];
       if (!origin || ACCEPTED_ORIGINS.includes(origin)) {
         return callback(null, true);
       }
@@ -45,6 +50,20 @@ app.use(
     },
   })
 );
+
+// ----------- SCALAR DOCS -----------
+app.use(
+  "/reference",
+  apiReference({
+    url: "/openapi.json",
+    theme: "kepler",
+    showDeveloperTools: "always",
+  })
+);
+
+app.get("/openapi.json", (req, res) => {
+  res.sendFile(path.join(__dirname, "docs/openapi.json"));
+});
 
 app.use(express.json());
 
