@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "pnpm --filter client-subscription-manager dev",
+    "start:client": "pnpm --filter client-subscription-manager dev",
+    "start:server": "pnpm --filter server-subscription-manager dev",
     "install:all": "pnpm install"
   }
 }
