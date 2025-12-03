@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { type Subscription, type Category } from '@/types/types'
 import { Menu, CirclePlus } from "lucide-react"
 import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
@@ -11,31 +11,49 @@ import { Layout } from "@/components/Layout"
 import { CategoryDialog } from '@/components/CategoryDialog'
 import { SubscriptionDialog } from "@/components/SubscriptionDialog"
 import { SuscriptionCard } from "@/features/subscriptions/SuscriptionCard"
-
+import { getCategories } from "./api/categories"
+import { getSubscriptions } from "./api/subscriptions"
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false)
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([
-    {
-      id: '1',
-      title: 'Netflix',
-      category: 'Entertaiment',
-      nextRenewal: new Date(2025, 11, 3),
-      price: 12.99,
-      isRenews: true
-    }
-  ])
-  const [categories, setCategories] = useState<Category[]>([
-    { id: '1', name: 'Entertaiment', color: '#FF5733' },
-  ])
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([])
   /**
    * 1 Importamos el Dialog
    * 2 Usar el componente Dialog en un componente, luego asignar las props de open y setOpen
    * 3 Creamos un estado para open y setOpen, y con esto indicamos al Dialog si se tiene que abrir o cerrar
    * 4 Con un boton abrimos el Dialog y para cerrar eso se encarga el Dialog internamente
    */
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data)
+      } catch (error) {
+        console.log("Error loading: ", error);
+      }
+    }
+    loadCategories()
+  }, [])
+
+  useEffect(() => {
+    const loadSubscriptions = async () => {
+      try {
+        const data = await getSubscriptions();
+        const parsed = data.map((sub: Subscription) => ({
+          ...sub,
+          price: Number(sub.price)
+        }))
+        setSubscriptions(parsed)
+      } catch (error) {
+        console.log("Error loading subscriptions: ", error);
+      }
+    }
+    loadSubscriptions()
+  }, [])
 
   const totalMonthy = useMemo(() => {
     return subscriptions.reduce((total, subscription) => {
@@ -51,31 +69,27 @@ export const SubscriptionPage = () => {
   const upcomingRenewals = useMemo(() => {
     const today = new Date()
     const renewingSoon = subscriptions.filter((sub) => {
-      // Calcular cuántos días FALTAN para la renovación
-      const diffMiliSeconds = sub.nextRenewal.getTime() - today.getTime()
+      const nextRenewalDate = new Date(sub.nextRenewal); // <-- convertir string a Date
+      const diffMiliSeconds = nextRenewalDate.getTime() - today.getTime()
       const diffDays = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24));
-
-      /**TODO:
-       * Saber cuantos dias de renovacion faltan o pasaron.
-       * Subsciption log items -> Subscription: Netflix diffDays: -6
-       */
-      // console.log('Subscription:', sub.title, 'diffDays:', diffDays)
-
-      // Mostrar solo si faltan entre 0 y MAX_DAYS días
       return diffDays >= 0 && diffDays <= MAX_DAYS_TO_ANNOUNCE_RENEWAL;
     })
-
-    // console.log('Suscripciones próximas a renovarse:', renewingSoon);
     return renewingSoon.length
   }, [subscriptions])
 
+  const getCategoryName = (categoryId: number) => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return category ? category.name : "Unknown"; // fallback si no existe
+  };
+
+
   const filteredSubscriptions = useMemo(() => {
-    if (selectedCategories.length === 0) {
-      return subscriptions
-    }
-    return subscriptions.filter((sub) => selectedCategories.includes(sub.category.toLowerCase())
-    )
-  }, [selectedCategories, subscriptions])
+    if (selectedCategories.length === 0) return subscriptions;
+
+    return subscriptions.filter(sub => selectedCategories.includes(sub.categoryId));
+  }, [selectedCategories, subscriptions]);
+
+
   return (
     <Layout>
       <Sidebar
@@ -101,7 +115,6 @@ export const SubscriptionPage = () => {
           <ButtonGroupDemo setSubscriptionDialogOpen={setSubscriptionDialogOpen} setCategoryDialogOpen={setCategoryDialogOpen} />
 
         </header>
-
         {/* Main Content Scroll Area */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="mx-auto max-w-6xl space-y-6">
@@ -122,7 +135,7 @@ export const SubscriptionPage = () => {
                       key={subscription.id}
                       title={subscription.title}
                       nextRenewal={subscription.nextRenewal}
-                      category={subscription.category}
+                      category={getCategoryName(subscription.categoryId)}
                       price={subscription.price}
                       isRenews={checkIfRenewalIsNear(subscription.nextRenewal)} />
                   ))) : (
@@ -175,5 +188,6 @@ export const SubscriptionPage = () => {
         </div>
       </main>
     </Layout>
+
   )
 }

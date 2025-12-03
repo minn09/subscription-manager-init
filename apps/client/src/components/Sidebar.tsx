@@ -19,21 +19,20 @@ interface SidebarProps {
   onClose?: () => void
   categories: Category[]
   subscriptions: Subscription[]
-  selectedCategories: string[]
-  onCategoryChange: (categories: string[]) => void
+  selectedCategories: number[]
+  onCategoryChange: (categories: number[]) => void
 }
 
 export function Sidebar({ isOpen = false, onClose, categories, subscriptions, selectedCategories, onCategoryChange }: SidebarProps) {
-  const countCategories = (category: string) => {
-    return subscriptions.filter(sub => sub.category.toLowerCase() === category.toLowerCase()).length
+  const countCategories = (categoryId: number) => {
+    return subscriptions.filter(sub => sub.categoryId === categoryId).length;
   }
 
-  const handleCategoryToggle = (categoryName: string) => {
-    const lowerCaseName = categoryName.toLowerCase()
-    if (selectedCategories.includes(lowerCaseName)) {
-      onCategoryChange(selectedCategories.filter(cat => cat !== lowerCaseName))
+  const handleCategoryToggle = (categoryId: number) => {
+    if (selectedCategories.includes(categoryId)) {
+      onCategoryChange(selectedCategories.filter(id => id !== categoryId));
     } else {
-      onCategoryChange([...selectedCategories, lowerCaseName])
+      onCategoryChange([...selectedCategories, categoryId]);
     }
   }
 
@@ -82,10 +81,10 @@ export function Sidebar({ isOpen = false, onClose, categories, subscriptions, se
               <CategoryItem
                 key={categorie.id}
                 label={categorie.name}
-                count={countCategories(categorie.name)}
+                count={countCategories(categorie.id)}
                 color={categorie.color}
-                isSelected={selectedCategories.includes(categorie.name.toLowerCase())}
-                onToggle={() => handleCategoryToggle(categorie.name)}
+                isSelected={selectedCategories.includes(categorie.id)}
+                onToggle={() => handleCategoryToggle(categorie.id)}
               />
             ))}
           </div>

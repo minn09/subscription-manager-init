@@ -24,7 +24,8 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
   const Logo = LOGOS[title.toLowerCase()] ?? HelpCircle;
   const today = new Date()
   // Calcular cuántos días FALTAN
-  const diffMiliSeconds = nextRenewal.getTime() - today.getTime()
+  const nextRenewalDate = new Date(nextRenewal); // <-- convertir string a Date
+  const diffMiliSeconds = nextRenewalDate.getTime() - today.getTime()
   const daysToRenewal = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24))
   return (
     <Card className={cn("flex flex-col transition-all hover:shadow-md relative", {

@@ -37,11 +37,11 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
     const [year, month, day] = date.split('-').map(Number)
     const nextRenewalDate = new Date(year, month - 1, day)
 
-
+    //TOOD: Se usa desde el backend ya no desde local
     const newSubscription: Subscription = {
       id: crypto.randomUUID(),
       title: name,
-      category: category.toLocaleUpperCase(),
+      categoryId: category,
       nextRenewal: nextRenewalDate,
       price: price,
       isRenews: false

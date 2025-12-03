@@ -1,14 +1,14 @@
 export type Subscription = {
-    id: string
-    title: string
-    category: string
-    nextRenewal: Date
-    price: number
-    isRenews: boolean
-  }
+  id: string;
+  title: string;
+  categoryId: number;
+  nextRenewal: Date;
+  price: number;
+  isRenews: boolean;
+};
 
 export type Category = {
-  id: string
-  name: string
-  color: string
-}
+  id: number;
+  name: string;
+  color: string;
+};
