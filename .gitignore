@@ -27,3 +27,5 @@ npm-debug.log*
 .DS_Store
 IMPROVEMENTS.md
 index.examples.js
+docs/
+README.md
