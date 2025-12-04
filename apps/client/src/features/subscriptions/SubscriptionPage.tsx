@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { type Subscription, type Category } from '@/types/types'
-import { Menu, CirclePlus } from "lucide-react"
+import { Menu } from "lucide-react"
 import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
-import { Button } from "@/components/ui/button"
 import { ButtonGroupDemo } from '@/components/ButtonGroup'
 import { StatCard } from "@/components/StatCard"
 import { Sidebar } from "@/components/Sidebar"
@@ -13,6 +12,7 @@ import { SubscriptionDialog } from "@/components/SubscriptionDialog"
 import { SuscriptionCard } from "@/features/subscriptions/SuscriptionCard"
 import { getCategories } from "./api/categories"
 import { getSubscriptions } from "./api/subscriptions"
+import SubscriptionsEmptyView from "@/components/SubscriptionsEmptyView"
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
@@ -82,7 +82,6 @@ export const SubscriptionPage = () => {
     return category ? category.name : "Unknown"; // fallback si no existe
   };
 
-
   const filteredSubscriptions = useMemo(() => {
     if (selectedCategories.length === 0) return subscriptions;
 
@@ -105,14 +104,17 @@ export const SubscriptionPage = () => {
         <header className="flex h-16 items-center border-b border-border bg-background/50 px-4 md:px-6 backdrop-blur-sm gap-4 justify-between">
           <button
             className="md:hidden p-2 -ml-2 hover:bg-accent rounded-md"
-            onClick={() => setSidebarOpen(true)}
-          >
+            onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5" />
           </button>
           <h1 className="text-lg font-semibold">
             <a href="/">Dashboard</a>
           </h1>
-          <ButtonGroupDemo setSubscriptionDialogOpen={setSubscriptionDialogOpen} setCategoryDialogOpen={setCategoryDialogOpen} />
+
+          <ButtonGroupDemo
+            setSubscriptionDialogOpen={setSubscriptionDialogOpen}
+            setCategoryDialogOpen={setCategoryDialogOpen}
+          />
 
         </header>
         {/* Main Content Scroll Area */}
@@ -139,37 +141,14 @@ export const SubscriptionPage = () => {
                       price={subscription.price}
                       isRenews={checkIfRenewalIsNear(subscription.nextRenewal)} />
                   ))) : (
-                  <div className="col-span-full text-center py-8 text-muted-foreground">
-                    No subscriptions found for selected categories
-                  </div>)}
-
+                  <SubscriptionsEmptyView
+                    setCategoryDialogOpen={() => setSubscriptionDialogOpen(true)}
+                    setSubscriptionDialogOpen={() => setCategoryDialogOpen(true)}
+                  />
+                )}
               </div>
             </div>
 
-            {/* Content Placeholder */}
-            <div className="rounded-xl border border-border bg-card p-8 shadow-sm">
-              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-muted/5 py-16 px-4 text-center animate-in fade-in-50">
-                <div className="mb-4 rounded-full bg-blue-400/10 p-4">
-                  <CirclePlus className="h-8 w-8 text-blue-400" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-foreground">
-                  No more subscriptions
-                </h3>
-                <p className="mb-8 max-w-sm text-sm text-muted-foreground leading-relaxed">
-                  You've reached the end of the list. Click the button below to add a new subscription and start tracking your expenses.
-                </p>
-                <div className="flex gap-2 flex-col md:flex-row">
-                  <Button className="bg-blue-400 hover:bg-blue-500 text-white font-medium px-6"
-                    onClick={() => setSubscriptionDialogOpen(true)}>
-                    Add Subscription
-                  </Button>
-                  <Button className="bg-blue-400 hover:bg-blue-500 text-white font-medium px-6"
-                    onClick={() => setCategoryDialogOpen(true)}>
-                    Add Category
-                  </Button>
-                </div>
-              </div>
-            </div>
             <SubscriptionDialog
               open={subscriptionDialogOpen}
               setOpen={setSubscriptionDialogOpen}
@@ -188,6 +167,5 @@ export const SubscriptionPage = () => {
         </div>
       </main>
     </Layout>
-
   )
 }
