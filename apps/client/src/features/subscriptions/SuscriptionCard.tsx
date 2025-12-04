@@ -13,6 +13,8 @@ type SuscriptionCardProps = {
   price: number,
   isRenews?: boolean
 }
+import { type SVG } from '@/types/svgl'
+import { useState, useEffect } from "react"
 
 export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews }: SuscriptionCardProps) => {
 
@@ -27,6 +29,35 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
   const nextRenewalDate = new Date(nextRenewal); // <-- convertir string a Date
   const diffMiliSeconds = nextRenewalDate.getTime() - today.getTime()
   const daysToRenewal = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24))
+  const [svg, setSVG] = useState<SVG>()
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const firstWord = (title ?? "")
+          .trim()
+          .split(" ")
+          .filter(Boolean)[0] ?? "";
+        const result = await fetch(`https://api.svgl.app/?search=${firstWord}`);
+
+        const svgLists: SVG[] = await result.json();
+
+        if (!svgLists || svgLists.length === 0) return;
+
+        const svgRaw = svgLists[0]
+        const route =
+          typeof svgRaw.route === 'string'
+            ? svgRaw.route
+            : svgRaw.route.light || svgRaw.route.dark
+
+        setSVG({ ...svgRaw, route })
+      } catch (error) {
+        console.log("Error loading: ", error);
+      }
+    };
+    loadData();
+  }, [title]);
+
   return (
     <Card className={cn("flex flex-col transition-all hover:shadow-md relative", {
       "border-yellow-500 bg-yellow-50/5": isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
@@ -43,8 +74,11 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
 
       <CardHeader className="flex flex-row items-center gap-4 pt-6 pb-4">
         <div className="bg-pink-50 rounded-2xl p-2.5 shrink-0">
-          {Logo && <Logo className="h-8 w-8 text-pink-500" />}
-
+          {svg ? (
+            <img src={`${svg.route}`} width={32} height={32} />
+          ) : (
+            <Logo className="h-8 w-8 text-pink-500" />
+          )}
         </div>
         <div className="flex flex-col min-w-0">
           <h2 className="text-lg font-semibold truncate pr-4">{title}</h2>
