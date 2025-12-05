@@ -46,7 +46,6 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
       price: price,
       isRenews: false
     }
-
     setSubscriptions([...subscriptions, newSubscription])
     setOpen(false)
   }
@@ -82,13 +81,14 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
               <select
                 id="billing-cycle"
                 name="billing-cycle"
+                disabled
                 className={cn(
                   "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
                   "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                   "disabled:cursor-not-allowed disabled:opacity-50"
                 )}
               >
-                <option value="monthly">Monthly</option>
+                <option value="monthly">Coming soon...</option>
                 <option value="yearly">Yearly</option>
               </select>
             </div>
