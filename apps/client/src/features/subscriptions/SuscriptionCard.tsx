@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { formatCurrency, formatDate } from "@/lib/formatCurrency"
-import { HelpCircle, Pencil, Siren, Trash } from "lucide-react"
+import { HelpCircle, Pencil, Siren } from "lucide-react"
 import { LOGOS } from "@/lib/logoByName"
 import { cn } from "@/lib/utils"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
@@ -8,21 +8,36 @@ import { type SVG } from '@/types/svgl'
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 
+import { DeleteSubscriptionDialog } from "@/components/DeleteSubscriptionDialog"
+
 type SuscriptionCardProps = {
+  id: number,
   title: string,
   nextRenewal: Date,
   category: string,
   price: number,
-  isRenews?: boolean
+  isRenews?: boolean,
+  onDelete: (id: number) => void,
+  onEdit: (id: number) => void
 }
 
-export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews }: SuscriptionCardProps) => {
+export const SuscriptionCard = ({
+  id,
+  title,
+  nextRenewal,
+  category,
+  price,
+  isRenews,
+  onDelete,
+  onEdit, }: SuscriptionCardProps) => {
   // console.log('=== SuscriptionCard:', title, '===');
   // console.log('Today:', new Date().toLocaleDateString());
   // console.log('Renewal:', nextRenewal.toLocaleDateString());
   // console.log('Days until:', getDaysUntilRenewal(nextRenewal));
   // console.log('isRenews:', isRenews);
-  const Logo = LOGOS[title.toLowerCase()] ?? HelpCircle;
+  const safeTitle = typeof title === "string" ? title.toLowerCase() : "";
+  const Logo = LOGOS[safeTitle] ?? HelpCircle;
+
   const today = new Date()
   const nextRenewalDate = new Date(nextRenewal); // <-- convertir string a Date
   const diffMiliSeconds = nextRenewalDate.getTime() - today.getTime()
@@ -85,18 +100,19 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
           <div className="flex flex-col min-w-0 flex-1">
             <h2 className="text-lg font-semibold truncate">{title}</h2>
             <p className="text-sm text-muted-foreground">
-              Next Renewal: {formatDate(nextRenewal)}
+              Next Renewal: {nextRenewal ? formatDate(nextRenewal) : "Unknown"}
             </p>
           </div>
         </div>
 
         <div className="flex gap-2 shrink-0">
-          <Button className="bg-blue-500 hover:bg-blue-400" size={"icon-sm"} onClick={() => (console.log(`${nextRenewal}`))}>
+          <Button className="bg-blue-500 hover:bg-blue-400" size={"icon-sm"} onClick={() => onEdit(id)}>
             <Pencil className="w-4 h-4" />
           </Button>
-          <Button variant={"outline"}>
-            <Trash className="w-4 h-4" />
-          </Button>
+
+          <DeleteSubscriptionDialog
+            onDelete={() => onDelete(id)}
+          />
         </div>
       </CardHeader>
 

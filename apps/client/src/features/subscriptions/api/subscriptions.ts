@@ -6,3 +6,11 @@ export const getSubscriptions = async (): Promise<Subscription[]> => {
   const subscriptions = await response.json();
   return subscriptions;
 };
+
+export const deleteSubscription = async (id: number) => {
+  const response = await fetch(`${API_URL}/subscriptions/${id}`, {
+    method: "DELETE",
+  });
+  const subscriptions = await response.json();
+  return subscriptions;
+};

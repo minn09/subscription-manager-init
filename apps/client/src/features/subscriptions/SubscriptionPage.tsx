@@ -11,7 +11,7 @@ import { CategoryDialog } from '@/components/CategoryDialog'
 import { SubscriptionDialog } from "@/components/SubscriptionDialog"
 import { SuscriptionCard } from "@/features/subscriptions/SuscriptionCard"
 import { getCategories } from "./api/categories"
-import { getSubscriptions } from "./api/subscriptions"
+import { deleteSubscription, getSubscriptions } from "./api/subscriptions"
 import SubscriptionsEmptyView from "@/components/SubscriptionsEmptyView"
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -88,6 +88,14 @@ export const SubscriptionPage = () => {
     return subscriptions.filter(sub => selectedCategories.includes(sub.categoryId));
   }, [selectedCategories, subscriptions]);
 
+  const handleDelete = async (id: number) => {
+    await deleteSubscription(id)
+    setSubscriptions(prev => prev.filter(s => s.id !== id));
+  }
+
+  const handleEdit = () => {
+    return;
+  }
 
   return (
     <Layout>
@@ -135,11 +143,15 @@ export const SubscriptionPage = () => {
                   filteredSubscriptions.map((subscription) => (
                     <SuscriptionCard
                       key={subscription.id}
+                      id={subscription.id}
                       title={subscription.title}
                       nextRenewal={subscription.nextRenewal}
                       category={getCategoryName(subscription.categoryId)}
                       price={subscription.price}
-                      isRenews={checkIfRenewalIsNear(subscription.nextRenewal)} />
+                      isRenews={checkIfRenewalIsNear(subscription.nextRenewal)}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                    />
                   ))) : (
                   <SubscriptionsEmptyView
                     setCategoryDialogOpen={() => setSubscriptionDialogOpen(true)}
