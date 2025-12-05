@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { formatCurrency, formatDate } from "@/lib/formatCurrency"
-import { HelpCircle, Siren } from "lucide-react"
+import { HelpCircle, Pencil, Siren, Trash } from "lucide-react"
 import { LOGOS } from "@/lib/logoByName"
 import { cn } from "@/lib/utils"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
-// import { getDaysUntilRenewal } from "@/lib/checkIfRenewalIsNear"
+import { type SVG } from '@/types/svgl'
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
 
 type SuscriptionCardProps = {
   title: string,
@@ -13,11 +15,8 @@ type SuscriptionCardProps = {
   price: number,
   isRenews?: boolean
 }
-import { type SVG } from '@/types/svgl'
-import { useState, useEffect } from "react"
 
 export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews }: SuscriptionCardProps) => {
-
   // console.log('=== SuscriptionCard:', title, '===');
   // console.log('Today:', new Date().toLocaleDateString());
   // console.log('Renewal:', nextRenewal.toLocaleDateString());
@@ -25,7 +24,6 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
   // console.log('isRenews:', isRenews);
   const Logo = LOGOS[title.toLowerCase()] ?? HelpCircle;
   const today = new Date()
-  // Calcular cuántos días FALTAN
   const nextRenewalDate = new Date(nextRenewal); // <-- convertir string a Date
   const diffMiliSeconds = nextRenewalDate.getTime() - today.getTime()
   const daysToRenewal = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24))
@@ -45,11 +43,13 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
         if (!svgLists || svgLists.length === 0) return;
 
         const svgRaw = svgLists[0]
+
+        //TODO: Error loading:  TypeError: Cannot read properties of undefined (reading 'route')
         const route =
           typeof svgRaw.route === 'string'
             ? svgRaw.route
             : svgRaw.route.light || svgRaw.route.dark
-
+        if (!route) return;
         setSVG({ ...svgRaw, route })
       } catch (error) {
         console.log("Error loading: ", error);
@@ -72,19 +72,31 @@ export const SuscriptionCard = ({ title, nextRenewal, category, price, isRenews 
         </div>
       )}
 
-      <CardHeader className="flex flex-row items-center gap-4 pt-6 pb-4">
-        <div className="bg-pink-50 rounded-2xl p-2.5 shrink-0">
-          {svg ? (
-            <img src={`${svg.route}`} width={32} height={32} />
-          ) : (
-            <Logo className="h-8 w-8 text-pink-500" />
-          )}
+      <CardHeader className="flex flex-row items-start justify-between pt-6 pb-4">
+        <div className="flex flex-row items-center gap-4 min-w-0">
+          <div className="bg-pink-50 rounded-2xl p-2.5 shrink-0">
+            {svg ? (
+              <img src={`${svg.route}`} width={32} height={32} />
+            ) : (
+              <Logo className="h-8 w-8 text-pink-500" />
+            )}
+          </div>
+
+          <div className="flex flex-col min-w-0 flex-1">
+            <h2 className="text-lg font-semibold truncate">{title}</h2>
+            <p className="text-sm text-muted-foreground">
+              Next Renewal: {formatDate(nextRenewal)}
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col min-w-0">
-          <h2 className="text-lg font-semibold truncate pr-4">{title}</h2>
-          <p className="text-sm text-muted-foreground truncate">
-            Next Renewal: {formatDate(nextRenewal)}
-          </p>
+
+        <div className="flex gap-2 shrink-0">
+          <Button className="bg-blue-500 hover:bg-blue-400" size={"icon-sm"} onClick={() => (console.log(`${nextRenewal}`))}>
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button variant={"outline"}>
+            <Trash className="w-4 h-4" />
+          </Button>
         </div>
       </CardHeader>
 
