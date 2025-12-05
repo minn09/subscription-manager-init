@@ -9,8 +9,13 @@ export const formatCurrency = (
   }).format(amount);
 };
 
-export const formatDate = (date: Date | string) => {
+export const formatDate = (date: Date | string | null | undefined) => {
+  if (!date) return "No date";
+
   const dateObj = typeof date === "string" ? new Date(date) : date;
+
+  if (isNaN(dateObj.getTime())) return "Invalid date";
+
   return dateObj.toLocaleDateString("es-PE", {
     year: "numeric",
     month: "short",

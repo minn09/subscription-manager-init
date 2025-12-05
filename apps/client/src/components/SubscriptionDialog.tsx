@@ -1,3 +1,4 @@
+import { createSubscription } from "@/api/createSubscriptions"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { type Subscription, type Category } from '@/types/types'
+import { type Category, type CreateSubscription, type Subscription } from '@/types/types'
 
 type SubscriptionDialogProps = {
   open: boolean
@@ -22,7 +23,8 @@ type SubscriptionDialogProps = {
 }
 
 export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscriptions, categories }: SubscriptionDialogProps) {
-  const addSubscription = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const addSubscription = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     // Recuperar los datos del formulario y asignarlos al estado de suscripciones
@@ -30,7 +32,7 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
     const formData = new FormData(form)
 
     const name = formData.get('name') as string
-    const category = formData.get('category') as string
+    const category = Number(formData.get('category'))
     const date = formData.get('date') as string
     const price = parseFloat(formData.get('price') as string)
 
@@ -38,16 +40,21 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
     const nextRenewalDate = new Date(year, month - 1, day)
 
     //TOOD: Se usa desde el backend ya no desde local
-    const newSubscription: Subscription = {
-      id: crypto.randomUUID(),
+    const newSubscription: CreateSubscription = {
       title: name,
       categoryId: category,
       nextRenewal: nextRenewalDate,
       price: price,
       isRenews: false
     }
-    setSubscriptions([...subscriptions, newSubscription])
-    setOpen(false)
+
+    try {
+      const created = await createSubscription(newSubscription)
+      setSubscriptions([...subscriptions, created])
+      setOpen(false)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   return (
@@ -117,7 +124,7 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
               <option value="" disabled>Select a category</option>
               {
                 categories.map((category) => (
-                  <option value={category.name} key={category.id}>
+                  <option value={category.id} key={category.id}>
                     {category.name}
                   </option>
                 ))

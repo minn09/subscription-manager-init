@@ -1,9 +1,9 @@
 export type Subscription = {
-  id: string;
+  id: number;
   title: string;
+  price: number;
   categoryId: number;
   nextRenewal: Date;
-  price: number;
   isRenews: boolean;
 };
 
@@ -12,3 +12,6 @@ export type Category = {
   name: string;
   color: string;
 };
+
+export type CreateSubscription = Omit<Subscription, "id">;
+export type CreateCategory = Omit<Category, "id">;
