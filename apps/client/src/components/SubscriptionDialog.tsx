@@ -67,7 +67,9 @@ export function SubscriptionDialog({ open, setOpen, setSubscriptions, subscripti
             done.
           </DialogDescription>
         </DialogHeader>
-        <form id="form" onSubmit={(e) => { addSubscription(e) }} className="grid gap-6 py-4">
+        <form id="form" onSubmit={(e) => {
+          addSubscription(e)
+        }} className="grid gap-6 py-4">
           {/* Subscription Name */}
           <div className="grid gap-2">
             <Label htmlFor="name">Subscription Name</Label>
