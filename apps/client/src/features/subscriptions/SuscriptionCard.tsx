@@ -1,35 +1,38 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { formatCurrency, formatDate } from "@/lib/formatCurrency"
-import { HelpCircle, Pencil, Siren } from "lucide-react"
+import { HelpCircle, Siren } from "lucide-react"
 import { LOGOS } from "@/lib/logoByName"
 import { cn } from "@/lib/utils"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
 import { type SVG } from '@/types/svgl'
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 
 import { DeleteSubscriptionDialog } from "@/components/DeleteSubscriptionDialog"
-
+import EditSubscriptionDialog from "@/components/EditSubscriptionDialog"
+import { type Category, type UpdateSubscription } from '@/types/types'
 type SuscriptionCardProps = {
   id: number,
   title: string,
   nextRenewal: Date,
-  category: string,
+  categoryId: number,
   price: number,
   isRenews?: boolean,
   onDelete: (id: number) => void,
-  onEdit: (id: number) => void
+  onEdit: (id: number, data: UpdateSubscription) => void
+  categories: Category[]
 }
 
 export const SuscriptionCard = ({
   id,
   title,
   nextRenewal,
-  category,
+  categoryId: category,
   price,
   isRenews,
   onDelete,
-  onEdit, }: SuscriptionCardProps) => {
+  onEdit,
+  categories
+}: SuscriptionCardProps) => {
   // console.log('=== SuscriptionCard:', title, '===');
   // console.log('Today:', new Date().toLocaleDateString());
   // console.log('Renewal:', nextRenewal.toLocaleDateString());
@@ -43,6 +46,9 @@ export const SuscriptionCard = ({
   const diffMiliSeconds = nextRenewalDate.getTime() - today.getTime()
   const daysToRenewal = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24))
   const [svg, setSVG] = useState<SVG>()
+
+  const categoryName =
+    categories.find(c => c.id === category)?.name ?? "Unknown";
 
   useEffect(() => {
     const loadData = async () => {
@@ -106,9 +112,17 @@ export const SuscriptionCard = ({
         </div>
 
         <div className="flex gap-2 shrink-0">
-          <Button className="bg-blue-500 hover:bg-blue-400" size={"icon-sm"} onClick={() => onEdit(id)}>
-            <Pencil className="w-4 h-4" />
-          </Button>
+          <EditSubscriptionDialog
+            id={id}
+            categories={categories}
+            onEdit={onEdit}
+            defaultValues={{
+              title,
+              price,
+              categoryId: category,
+              nextRenewal
+            }}
+          />
 
           <DeleteSubscriptionDialog
             onDelete={() => onDelete(id)}
@@ -118,7 +132,7 @@ export const SuscriptionCard = ({
 
       <CardContent className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-0">
         <span className="px-2.5 py-1 text-xs rounded-full bg-pink-50 text-pink-500 font-medium whitespace-nowrap">
-          {category}
+          {categoryName}
         </span>
         <div className="flex items-baseline gap-1">
           <p className="text-xl font-bold">{formatCurrency(price)}</p>

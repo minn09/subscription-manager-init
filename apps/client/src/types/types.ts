@@ -15,3 +15,4 @@ export type Category = {
 
 export type CreateSubscription = Omit<Subscription, "id">;
 export type CreateCategory = Omit<Category, "id">;
+export type UpdateSubscription = Omit<Subscription, "id" | "isRenews">;

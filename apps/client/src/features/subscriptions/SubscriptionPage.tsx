@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { type Subscription, type Category } from '@/types/types'
+import { type Subscription, type Category, type UpdateSubscription } from '@/types/types'
 import { Menu } from "lucide-react"
 import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
@@ -11,8 +11,9 @@ import { CategoryDialog } from '@/components/CategoryDialog'
 import { SubscriptionDialog } from "@/components/SubscriptionDialog"
 import { SuscriptionCard } from "@/features/subscriptions/SuscriptionCard"
 import { getCategories } from "./api/categories"
-import { deleteSubscription, getSubscriptions } from "./api/subscriptions"
+import { deleteSubscription, editSubscription, getSubscriptions } from "./api/subscriptions"
 import SubscriptionsEmptyView from "@/components/SubscriptionsEmptyView"
+import { toast } from "sonner"
 export const SubscriptionPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
@@ -31,13 +32,14 @@ export const SubscriptionPage = () => {
     const loadCategories = async () => {
       try {
         const data = await getCategories();
-        setCategories(data)
+        setCategories(data);
       } catch (error) {
         console.log("Error loading: ", error);
       }
-    }
-    loadCategories()
-  }, [])
+    };
+    loadCategories();
+  }, []);
+
 
   useEffect(() => {
     const loadSubscriptions = async () => {
@@ -46,14 +48,16 @@ export const SubscriptionPage = () => {
         const parsed = data.map((sub: Subscription) => ({
           ...sub,
           price: Number(sub.price)
-        }))
-        setSubscriptions(parsed)
+        }));
+
+        setSubscriptions(parsed);
       } catch (error) {
         console.log("Error loading subscriptions: ", error);
       }
-    }
-    loadSubscriptions()
-  }, [])
+    };
+    loadSubscriptions();
+  }, []);
+
 
   const totalMonthy = useMemo(() => {
     return subscriptions.reduce((total, subscription) => {
@@ -77,10 +81,10 @@ export const SubscriptionPage = () => {
     return renewingSoon.length
   }, [subscriptions])
 
-  const getCategoryName = (categoryId: number) => {
-    const category = categories.find(cat => cat.id === categoryId);
-    return category ? category.name : "Unknown"; // fallback si no existe
-  };
+  // const getCategoryName = (categoryId: number) => {
+  //   const category = categories.find(cat => cat.id === categoryId);
+  //   return category ? category.name : "Unknown"; // fallback si no existe
+  // };
 
   const filteredSubscriptions = useMemo(() => {
     if (selectedCategories.length === 0) return subscriptions;
@@ -93,9 +97,27 @@ export const SubscriptionPage = () => {
     setSubscriptions(prev => prev.filter(s => s.id !== id));
   }
 
-  const handleEdit = () => {
-    return;
-  }
+  const handleEdit = async (id: number, data: UpdateSubscription) => {
+    try {
+      const response = await editSubscription(id, data);
+      const updated = response.subscription; // <-- Extraer correctamente
+
+      const parsed = {
+        ...updated,
+        price: Number(updated.price),
+        nextRenewal: updated.nextRenewal
+      };
+
+      toast.success("Subscription updated!");
+      setSubscriptions(prev => {
+        const newState = prev.map(sub => (sub.id === id ? parsed : sub));
+        return newState;
+      });
+    } catch (error) {
+      console.error("Edit error:", error);
+      toast.error("Error updating subscription");
+    }
+  };
 
   return (
     <Layout>
@@ -140,23 +162,30 @@ export const SubscriptionPage = () => {
               <h2 className="text-lg font-semibold">Your Suscriptions</h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {filteredSubscriptions.length > 0 ? (
-                  filteredSubscriptions.map((subscription) => (
-                    <SuscriptionCard
-                      key={subscription.id}
-                      id={subscription.id}
-                      title={subscription.title}
-                      nextRenewal={subscription.nextRenewal}
-                      category={getCategoryName(subscription.categoryId)}
-                      price={subscription.price}
-                      isRenews={checkIfRenewalIsNear(subscription.nextRenewal)}
-                      onDelete={handleDelete}
-                      onEdit={handleEdit}
+                  filteredSubscriptions.map((subscription) => {
+                    console.log("🖼️ RENDER CARD:", subscription);
+                    return (
+                      <SuscriptionCard
+                        key={subscription.id}
+                        id={subscription.id}
+                        title={subscription.title}
+                        nextRenewal={subscription.nextRenewal}
+                        categoryId={subscription.categoryId}
+                        price={subscription.price}
+                        isRenews={checkIfRenewalIsNear(subscription.nextRenewal)}
+                        categories={categories}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                      />
+                    );
+                  })
+                ) : (
+                  <div key="empty" className="col-span-full">
+                    <SubscriptionsEmptyView
+                      setCategoryDialogOpen={() => setSubscriptionDialogOpen(true)}
+                      setSubscriptionDialogOpen={() => setCategoryDialogOpen(true)}
                     />
-                  ))) : (
-                  <SubscriptionsEmptyView
-                    setCategoryDialogOpen={() => setSubscriptionDialogOpen(true)}
-                    setSubscriptionDialogOpen={() => setCategoryDialogOpen(true)}
-                  />
+                  </div>
                 )}
               </div>
             </div>
