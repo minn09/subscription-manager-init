@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import { DeleteSubscriptionDialog } from "@/components/DeleteSubscriptionDialog"
 import { EditSubscriptionDialog } from "@/components/EditSubscriptionDialog"
 import { type Category, type Subscription, type UpdateSubscription } from '@/types/types'
+import { useNavigate } from "react-router"
 type SuscriptionCardProps = {
   id: number,
   subscription: Subscription,
@@ -29,6 +30,7 @@ export const SuscriptionCard = ({
   // console.log('Renewal:', nextRenewal.toLocaleDateString());
   // console.log('Days until:', getDaysUntilRenewal(nextRenewal));
   // console.log('isRenews:', isRenews);
+  const navigate = useNavigate()
   const safeTitle = typeof subscription.title === "string" ? subscription.title.toLowerCase() : "";
   const Logo = LOGOS[safeTitle] ?? HelpCircle;
 
@@ -70,10 +72,18 @@ export const SuscriptionCard = ({
     loadData();
   }, [subscription.title]);
 
+
+  const toDetails = (id: number) => {
+    navigate(`/subscriptions/details/${id}`, { state: subscription })
+  }
+
   return (
-    <Card className={cn("flex flex-col transition-all hover:shadow-md relative", {
-      "border-yellow-500 bg-yellow-50/5": subscription.isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
-    })}>
+    <Card
+      className={cn("flex flex-col transition-all hover:shadow-md relative", {
+        "border-yellow-500 bg-yellow-50/5": subscription.isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
+      })}
+      onClick={() => toDetails(id)}
+    >
       {(subscription.isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL) && (
         <div className="absolute top-4 right-4">
           <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-600 ring-1 ring-inset ring-yellow-500/20 animate-in fade-in zoom-in duration-300">

@@ -1,20 +1,17 @@
 import { Homepage } from "@/features/landing/HomePage"
 import { SubscriptionPage } from "@/features/subscriptions/SubscriptionPage"
+import { DetailsPage } from '@/components/DetailsPage'
 import { NotFoundPage } from "@/components/404"
+import { Routes, Route } from "react-router"
 
 function App() {
-  let page = <NotFoundPage />
-  const currentPath = window.location.pathname
-  if (currentPath === "/") {
-    page = <Homepage />
-  } else if (currentPath === "/subscriptions") {
-    page = <SubscriptionPage />
-  }
-
   return (
-    <>
-      {page}
-    </>
+    <Routes>
+      <Route path="/" element={<Homepage />} />
+      <Route path="/subscriptions" element={<SubscriptionPage />} />
+      <Route path="/subscriptions/details/:id" element={<DetailsPage />} />
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   )
 }
 
