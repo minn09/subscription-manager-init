@@ -6,54 +6,45 @@ import { cn } from "@/lib/utils"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
 import { type SVG } from '@/types/svgl'
 import { useState, useEffect } from "react"
-
 import { DeleteSubscriptionDialog } from "@/components/DeleteSubscriptionDialog"
-import EditSubscriptionDialog from "@/components/EditSubscriptionDialog"
-import { type Category, type UpdateSubscription } from '@/types/types'
+import { EditSubscriptionDialog } from "@/components/EditSubscriptionDialog"
+import { type Category, type Subscription, type UpdateSubscription } from '@/types/types'
 type SuscriptionCardProps = {
   id: number,
-  title: string,
-  nextRenewal: Date,
-  categoryId: number,
-  price: number,
-  isRenews?: boolean,
+  subscription: Subscription,
+  categories: Category[]
   onDelete: (id: number) => void,
   onEdit: (id: number, data: UpdateSubscription) => void
-  categories: Category[]
 }
 
 export const SuscriptionCard = ({
   id,
-  title,
-  nextRenewal,
-  categoryId: category,
-  price,
-  isRenews,
+  subscription,
+  categories,
   onDelete,
   onEdit,
-  categories
 }: SuscriptionCardProps) => {
   // console.log('=== SuscriptionCard:', title, '===');
   // console.log('Today:', new Date().toLocaleDateString());
   // console.log('Renewal:', nextRenewal.toLocaleDateString());
   // console.log('Days until:', getDaysUntilRenewal(nextRenewal));
   // console.log('isRenews:', isRenews);
-  const safeTitle = typeof title === "string" ? title.toLowerCase() : "";
+  const safeTitle = typeof subscription.title === "string" ? subscription.title.toLowerCase() : "";
   const Logo = LOGOS[safeTitle] ?? HelpCircle;
 
   const today = new Date()
-  const nextRenewalDate = new Date(nextRenewal); // <-- convertir string a Date
+  const nextRenewalDate = new Date(subscription.nextRenewal); // <-- convertir string a Date
   const diffMiliSeconds = nextRenewalDate.getTime() - today.getTime()
   const daysToRenewal = Math.ceil(diffMiliSeconds / (1000 * 60 * 60 * 24))
   const [svg, setSVG] = useState<SVG>()
 
   const categoryName =
-    categories.find(c => c.id === category)?.name ?? "Unknown";
+    categories.find(c => c.id === subscription.categoryId)?.name ?? "Unknown";
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const firstWord = (title ?? "")
+        const firstWord = (subscription.title ?? "")
           .trim()
           .split(" ")
           .filter(Boolean)[0] ?? "";
@@ -77,18 +68,17 @@ export const SuscriptionCard = ({
       }
     };
     loadData();
-  }, [title]);
+  }, [subscription.title]);
 
   return (
     <Card className={cn("flex flex-col transition-all hover:shadow-md relative", {
-      "border-yellow-500 bg-yellow-50/5": isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
+      "border-yellow-500 bg-yellow-50/5": subscription.isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
     })}>
-      {(isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL) && (
+      {(subscription.isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL) && (
         <div className="absolute top-4 right-4">
           <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-600 ring-1 ring-inset ring-yellow-500/20 animate-in fade-in zoom-in duration-300">
             <Siren className="h-3 w-3" />
             {daysToRenewal === 0 ? "Today it's your turn to renew 🥲" : `Renews in ${daysToRenewal} days 😁`}
-
           </span>
         </div>
       )}
@@ -104,9 +94,9 @@ export const SuscriptionCard = ({
           </div>
 
           <div className="flex flex-col min-w-0 flex-1">
-            <h2 className="text-lg font-semibold truncate">{title}</h2>
+            <h2 className="text-lg font-semibold truncate">{subscription.title}</h2>
             <p className="text-sm text-muted-foreground">
-              Next Renewal: {nextRenewal ? formatDate(nextRenewal) : "Unknown"}
+              Next Renewal: {subscription.nextRenewal ? formatDate(subscription.nextRenewal) : "Unknown"}
             </p>
           </div>
         </div>
@@ -117,10 +107,10 @@ export const SuscriptionCard = ({
             categories={categories}
             onEdit={onEdit}
             defaultValues={{
-              title,
-              price,
-              categoryId: category,
-              nextRenewal
+              title: subscription.title,
+              price: subscription.price,
+              categoryId: subscription.categoryId,
+              nextRenewal: subscription.nextRenewal
             }}
           />
 
@@ -135,8 +125,10 @@ export const SuscriptionCard = ({
           {categoryName}
         </span>
         <div className="flex items-baseline gap-1">
-          <p className="text-xl font-bold">{formatCurrency(price)}</p>
+          <p className="text-xl font-bold">{formatCurrency(subscription.price)}</p>
           <span className="text-xs text-muted-foreground">/mo</span>
+        </div>
+        <div>
         </div>
       </CardContent>
     </Card>

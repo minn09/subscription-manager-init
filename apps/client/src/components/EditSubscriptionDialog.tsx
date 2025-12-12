@@ -27,7 +27,7 @@ type Props = {
   onEdit: (id: number, data: UpdateSubscription) => void;
   categories: Category[]
 }
-export default function EditSubscriptionDialog({
+export function EditSubscriptionDialog({
   id,
   onEdit,
   categories,

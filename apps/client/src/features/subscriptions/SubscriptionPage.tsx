@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { type Subscription, type Category, type UpdateSubscription } from '@/types/types'
 import { Menu } from "lucide-react"
-import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
+// import { checkIfRenewalIsNear } from "@/lib/checkIfRenewalIsNear"
 import { MAX_DAYS_TO_ANNOUNCE_RENEWAL } from '@/constants/index'
 import { ButtonGroupDemo } from '@/components/ButtonGroup'
 import { StatCard } from "@/components/StatCard"
@@ -69,7 +69,6 @@ export const SubscriptionPage = () => {
     return totalMonthy * 12
   }, [totalMonthy])
 
-
   const upcomingRenewals = useMemo(() => {
     const today = new Date()
     const renewingSoon = subscriptions.filter((sub) => {
@@ -81,14 +80,8 @@ export const SubscriptionPage = () => {
     return renewingSoon.length
   }, [subscriptions])
 
-  // const getCategoryName = (categoryId: number) => {
-  //   const category = categories.find(cat => cat.id === categoryId);
-  //   return category ? category.name : "Unknown"; // fallback si no existe
-  // };
-
   const filteredSubscriptions = useMemo(() => {
     if (selectedCategories.length === 0) return subscriptions;
-
     return subscriptions.filter(sub => selectedCategories.includes(sub.categoryId));
   }, [selectedCategories, subscriptions]);
 
@@ -150,7 +143,6 @@ export const SubscriptionPage = () => {
         {/* Main Content Scroll Area */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="mx-auto max-w-6xl space-y-6">
-
             {/* Stats Grid Placeholder */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <StatCard title="Total Monthly" value={totalMonthy} format="currency" />
@@ -168,11 +160,7 @@ export const SubscriptionPage = () => {
                       <SuscriptionCard
                         key={subscription.id}
                         id={subscription.id}
-                        title={subscription.title}
-                        nextRenewal={subscription.nextRenewal}
-                        categoryId={subscription.categoryId}
-                        price={subscription.price}
-                        isRenews={checkIfRenewalIsNear(subscription.nextRenewal)}
+                        subscription={subscription}
                         categories={categories}
                         onDelete={handleDelete}
                         onEdit={handleEdit}

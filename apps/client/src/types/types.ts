@@ -4,7 +4,7 @@ export type Subscription = {
   price: number;
   categoryId: number;
   nextRenewal: Date;
-  isRenews: boolean;
+  isRenews?: boolean;
 };
 
 export type Category = {
