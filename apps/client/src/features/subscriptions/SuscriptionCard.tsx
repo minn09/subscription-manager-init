@@ -25,11 +25,6 @@ export const SuscriptionCard = ({
   onDelete,
   onEdit,
 }: SuscriptionCardProps) => {
-  // console.log('=== SuscriptionCard:', title, '===');
-  // console.log('Today:', new Date().toLocaleDateString());
-  // console.log('Renewal:', nextRenewal.toLocaleDateString());
-  // console.log('Days until:', getDaysUntilRenewal(nextRenewal));
-  // console.log('isRenews:', isRenews);
   const navigate = useNavigate()
   const safeTitle = typeof subscription.title === "string" ? subscription.title.toLowerCase() : "";
   const Logo = LOGOS[safeTitle] ?? HelpCircle;
@@ -74,27 +69,42 @@ export const SuscriptionCard = ({
 
 
   const toDetails = (id: number) => {
-    navigate(`/subscriptions/details/${id}`, { state: subscription })
+    //TODO: Modificar para enviar solo subscription y por el estado global obtener las categorias
+    navigate(`/subscriptions/details/${id}`, { state: { subscription, categoryName } })
   }
 
   return (
     <Card
-      className={cn("flex flex-col transition-all hover:shadow-md relative", {
-        "border-yellow-500 bg-yellow-50/5": subscription.isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
-      })}
-      onClick={() => toDetails(id)}
-    >
-      {(subscription.isRenews && daysToRenewal >= 0 && daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL) && (
-        <div className="absolute top-4 right-4">
-          <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-600 ring-1 ring-inset ring-yellow-500/20 animate-in fade-in zoom-in duration-300">
-            <Siren className="h-3 w-3" />
-            {daysToRenewal === 0 ? "Today it's your turn to renew 🥲" : `Renews in ${daysToRenewal} days 😁`}
-          </span>
-        </div>
+      className={cn(
+        "flex flex-col transition-all hover:shadow-md relative",
+        {
+          "border-yellow-500 bg-yellow-50/5":
+            subscription.isRenews &&
+            daysToRenewal >= 0 &&
+            daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL,
+        }
       )}
+    >
+      {(subscription.isRenews &&
+        daysToRenewal >= 0 &&
+        daysToRenewal <= MAX_DAYS_TO_ANNOUNCE_RENEWAL) && (
+          <div className="absolute top-4 right-4">
+            <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-600 ring-1 ring-inset ring-yellow-500/20 animate-in fade-in zoom-in duration-300">
+              <Siren className="h-3 w-3" />
+              {daysToRenewal === 0
+                ? "Today it's your turn to renew 🥲"
+                : `Renews in ${daysToRenewal} days 😁`}
+            </span>
+          </div>
+        )}
 
+      {/* Header: contenido clickeable + acciones */}
       <CardHeader className="flex flex-row items-start justify-between pt-6 pb-4">
-        <div className="flex flex-row items-center gap-4 min-w-0">
+        {/* ⬇️ SOLO esta parte navega */}
+        <div
+          className="flex flex-row items-center gap-4 min-w-0 flex-1 cursor-pointer"
+          onClick={() => toDetails(id)}
+        >
           <div className="bg-pink-50 rounded-2xl p-2.5 shrink-0">
             {svg ? (
               <img src={`${svg.route}`} width={32} height={32} />
@@ -103,14 +113,20 @@ export const SuscriptionCard = ({
             )}
           </div>
 
-          <div className="flex flex-col min-w-0 flex-1">
-            <h2 className="text-lg font-semibold truncate">{subscription.title}</h2>
+          <div className="flex flex-col min-w-0">
+            <h2 className="text-lg font-semibold truncate">
+              {subscription.title}
+            </h2>
             <p className="text-sm text-muted-foreground">
-              Next Renewal: {subscription.nextRenewal ? formatDate(subscription.nextRenewal) : "Unknown"}
+              Next Renewal:{" "}
+              {subscription.nextRenewal
+                ? formatDate(subscription.nextRenewal)
+                : "Unknown"}
             </p>
           </div>
         </div>
 
+        {/* ❌ No navega */}
         <div className="flex gap-2 shrink-0">
           <EditSubscriptionDialog
             id={id}
@@ -120,7 +136,7 @@ export const SuscriptionCard = ({
               title: subscription.title,
               price: subscription.price,
               categoryId: subscription.categoryId,
-              nextRenewal: subscription.nextRenewal
+              nextRenewal: subscription.nextRenewal,
             }}
           />
 
@@ -130,17 +146,23 @@ export const SuscriptionCard = ({
         </div>
       </CardHeader>
 
-      <CardContent className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-0">
+      {/* Content clickeable */}
+      <CardContent
+        className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-0 cursor-pointer"
+        onClick={() => toDetails(id)}
+      >
         <span className="px-2.5 py-1 text-xs rounded-full bg-pink-50 text-pink-500 font-medium whitespace-nowrap">
           {categoryName}
         </span>
+
         <div className="flex items-baseline gap-1">
-          <p className="text-xl font-bold">{formatCurrency(subscription.price)}</p>
+          <p className="text-xl font-bold">
+            {formatCurrency(subscription.price)}
+          </p>
           <span className="text-xs text-muted-foreground">/mo</span>
-        </div>
-        <div>
         </div>
       </CardContent>
     </Card>
+
   );
 };
